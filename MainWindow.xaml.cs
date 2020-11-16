@@ -1,8 +1,7 @@
-﻿using DevExpress.XtraReports.UI;
-using DevExpress.Xpf.Printing;
-using System.Windows;
+﻿using DevExpress.Xpf.Printing;
 using System;
-
+using System.Linq;
+using System.Windows;
 namespace WpfTutoReportingDevx
 {
     /// <summary>
@@ -13,10 +12,6 @@ namespace WpfTutoReportingDevx
         public MainWindow()
         {
             InitializeComponent();
-            //var mysqlConnection = DatabaseConnection.getDBConnection();
-            //mysqlConnection.Open();
-            //var version = mysqlConnection.ServerVersion;
-            //Console.WriteLine("MySQL version: " + version);
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -24,18 +19,26 @@ namespace WpfTutoReportingDevx
             PrintHelper.ShowPrintPreview(null, new XtraReport3());
         }
 
-        //public static class DatabaseConnection
-        //{
-        //    static MySqlConnection databaseConnection = null;
-        //    public static MySqlConnection getDBConnection()
-        //    {
-        //        if (databaseConnection == null)
-        //        {
-        //            string connectionString = ConfigurationManager.ConnectionStrings["myDatabaseConnection"].ConnectionString;
-        //            databaseConnection = new MySqlConnection(connectionString);
-        //        }
-        //        return databaseConnection;
-        //    }
+        private void UseEFExample()
+        {
+            var person = new Person();
+            using (var db = new AdventureWorks2017Entities())
+            {
+                db.Person.Add(person);
 
+                var q = from p in db.Person
+                        orderby p.Title
+                        select p;
+                foreach (var res in q)
+                {
+                    Console.WriteLine(res.FirstName);
+                }
+            }
+        }
+
+        private void ButtonEF_Click(object sender, RoutedEventArgs e)
+        {
+            UseEFExample();
+        }
     }
 }
